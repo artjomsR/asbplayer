@@ -1,6 +1,6 @@
-import { SubtitleModel } from '../src/model';
 import hotkeys from 'hotkeys-js';
 import { KeyBindSet } from '../settings/settings';
+import { SubtitleModel } from '../src/model';
 
 export function adjacentSubtitle(forward: boolean, time: number, subtitles: SubtitleModel[]) {
     const now = time;
@@ -60,8 +60,8 @@ export interface KeyBinder {
         subtitlesGetter: () => SubtitleModel[] | undefined,
         capture?: boolean
     ): () => void;
-    bindSeekToBeginningOfCurrentSubtitle(
-        onSeekToBeginningOfCurrentSubtitle: (event: KeyboardEvent, subtitle: SubtitleModel) => void,
+    bindSeekToBeginningOfCurrentOrPreviousSubtitle(
+        onseekToBeginningOfCurrentOrPreviousSubtitle: (event: KeyboardEvent, subtitle: SubtitleModel) => void,
         disabledGetter: () => boolean,
         timeGetter: () => number,
         subtitlesGetter: () => SubtitleModel[] | undefined,
@@ -292,14 +292,14 @@ export class DefaultKeyBinder implements KeyBinder {
         };
     }
 
-    bindSeekToBeginningOfCurrentSubtitle(
-        onSeekToBeginningOfCurrentSubtitle: (event: KeyboardEvent, subtitle: SubtitleModel) => void,
+    bindSeekToBeginningOfCurrentOrPreviousSubtitle(
+        onseekToBeginningOfCurrentOrPreviousSubtitle: (event: KeyboardEvent, subtitle: SubtitleModel) => void,
         disabledGetter: () => boolean,
         timeGetter: () => number,
         subtitlesGetter: () => SubtitleModel[] | undefined,
         capture = false
     ) {
-        const shortcut = this.keyBindSet.seekToBeginningOfCurrentSubtitle.keys;
+        const shortcut = this.keyBindSet.seekToBeginningOfCurrentOrPreviousSubtitle.keys;
 
         if (!shortcut) {
             return () => {};
@@ -319,7 +319,7 @@ export class DefaultKeyBinder implements KeyBinder {
             const subtitle = this._currentSubtitle(timeGetter(), subtitles);
 
             if (subtitle !== undefined && subtitle.start >= 0 && subtitle.end >= 0) {
-                onSeekToBeginningOfCurrentSubtitle(event, subtitle);
+                onseekToBeginningOfCurrentOrPreviousSubtitle(event, subtitle);
             }
         };
         return this._bind(shortcut, capture, handler);

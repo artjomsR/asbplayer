@@ -52,7 +52,7 @@ export const defaultSettings: AsbplayerSettings = {
         seekForward: { keys: 'D' },
         seekToPreviousSubtitle: { keys: 'left' },
         seekToNextSubtitle: { keys: 'right' },
-        seekToBeginningOfCurrentSubtitle: { keys: 'up' },
+        seekToBeginningOfCurrentOrPreviousSubtitle: { keys: 'up' },
         adjustOffsetToPreviousSubtitle: { keys: isMacOs ? '⇧+left' : 'ctrl+left' },
         adjustOffsetToNextSubtitle: { keys: isMacOs ? '⇧+right' : 'ctrl+right' },
         decreaseOffset: { keys: isMacOs ? '⇧+⌃+right' : 'ctrl+shift+right' },

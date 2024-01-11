@@ -64,7 +64,7 @@ it('validates exported settings', () => {
             resetOffset: { keys: '⇧+⌃+down' },
             seekBackward: { keys: 'A' },
             seekForward: { keys: 'D' },
-            seekToBeginningOfCurrentSubtitle: { keys: 'up' },
+            seekToBeginningOfCurrentOrPreviousSubtitle: { keys: 'up' },
             seekToNextSubtitle: { keys: 'right' },
             seekToPreviousSubtitle: { keys: 'left' },
             takeScreenshot: { keys: '⇧+⌃+V' },

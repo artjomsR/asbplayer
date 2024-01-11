@@ -4,8 +4,8 @@ import {
     ToggleSubtitlesMessage,
     VideoToExtensionCommand,
 } from '@project/common';
-import { KeyBindSet } from '@project/common/settings';
 import { DefaultKeyBinder } from '@project/common/key-binder';
+import { KeyBindSet } from '@project/common/settings';
 import Binding from './binding';
 
 type Unbinder = (() => void) | false;
@@ -18,7 +18,7 @@ export default class KeyBindings {
     private _unbindCondensedPlayback: Unbinder = false;
     private _unbindFastForwardPlayback: Unbinder = false;
     private _unbindSeekToSubtitle: Unbinder = false;
-    private _unbindSeekToBeginningOfCurrentSubtitle?: Unbinder = false;
+    private _unbindSeekToBeginningOfCurrentOrPreviousSubtitle?: Unbinder = false;
     private _unbindSeekBackwardOrForward?: Unbinder = false;
     private _unbindToggleSubtitles: Unbinder = false;
     private _unbindToggleSubtitleTrackInVideo?: Unbinder = false;
@@ -124,18 +124,19 @@ export default class KeyBindings {
             true
         );
 
-        this._unbindSeekToBeginningOfCurrentSubtitle = this._keyBinder.bindSeekToBeginningOfCurrentSubtitle(
-            (event, subtitle) => {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                context.seek(subtitle.start / 1000);
-                if (context.alwaysPlayOnSubtitleRepeat) context.play();
-            },
-            () => false,
-            () => context.video.currentTime * 1000,
-            () => context.subtitleController.subtitles,
-            true
-        );
+        this._unbindSeekToBeginningOfCurrentOrPreviousSubtitle =
+            this._keyBinder.bindSeekToBeginningOfCurrentOrPreviousSubtitle(
+                (event, subtitle) => {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    context.seek(subtitle.start / 1000);
+                    if (context.alwaysPlayOnSubtitleRepeat) context.play();
+                },
+                () => false,
+                () => context.video.currentTime * 1000,
+                () => context.subtitleController.subtitles,
+                true
+            );
 
         this._unbindToggleSubtitles = this._keyBinder.bindToggleSubtitles(
             (event) => {
@@ -262,9 +263,9 @@ export default class KeyBindings {
             this._unbindSeekToSubtitle = false;
         }
 
-        if (this._unbindSeekToBeginningOfCurrentSubtitle) {
-            this._unbindSeekToBeginningOfCurrentSubtitle();
-            this._unbindSeekToBeginningOfCurrentSubtitle = false;
+        if (this._unbindSeekToBeginningOfCurrentOrPreviousSubtitle) {
+            this._unbindSeekToBeginningOfCurrentOrPreviousSubtitle();
+            this._unbindSeekToBeginningOfCurrentOrPreviousSubtitle = false;
         }
 
         if (this._unbindSeekBackwardOrForward) {

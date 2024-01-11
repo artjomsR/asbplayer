@@ -124,7 +124,7 @@ const settingsSchema = {
                 seekForward: { $ref: '/KeyBind' },
                 seekToPreviousSubtitle: { $ref: '/KeyBind' },
                 seekToNextSubtitle: { $ref: '/KeyBind' },
-                seekToBeginningOfCurrentSubtitle: { $ref: '/KeyBind' },
+                seekToBeginningOfCurrentOrPreviousSubtitle: { $ref: '/KeyBind' },
                 adjustOffsetToPreviousSubtitle: { $ref: '/KeyBind' },
                 adjustOffsetToNextSubtitle: { $ref: '/KeyBind' },
                 decreaseOffset: { $ref: '/KeyBind' },

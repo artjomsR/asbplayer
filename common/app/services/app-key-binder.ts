@@ -138,15 +138,15 @@ export default class AppKeyBinder implements KeyBinder {
         );
     }
 
-    bindSeekToBeginningOfCurrentSubtitle(
-        onSeekToBeginningOfCurrentSubtitle: (event: KeyboardEvent, subtitle: SubtitleModel) => void,
+    bindSeekToBeginningOfCurrentOrPreviousSubtitle(
+        onseekToBeginningOfCurrentOrPreviousSubtitle: (event: KeyboardEvent, subtitle: SubtitleModel) => void,
         disabledGetter: () => boolean,
         timeGetter: () => number,
         subtitlesGetter: () => SubtitleModel[] | undefined,
         useCapture?: boolean | undefined
     ): () => void {
-        return this.defaultKeyBinder.bindSeekToBeginningOfCurrentSubtitle(
-            onSeekToBeginningOfCurrentSubtitle,
+        return this.defaultKeyBinder.bindSeekToBeginningOfCurrentOrPreviousSubtitle(
+            onseekToBeginningOfCurrentOrPreviousSubtitle,
             disabledGetter,
             timeGetter,
             subtitlesGetter,

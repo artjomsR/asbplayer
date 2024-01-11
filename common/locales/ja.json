@@ -81,7 +81,7 @@
         "seekBackward": "10 秒巻き戻し",
         "seekBackwardOrForward": "10 秒巻き戻し/早送り",
         "seekForward": "10 秒早送り",
-        "seekToBeginningOfCurrentSubtitle": "今の字幕冒頭に移動",
+        "seekToBeginningOfCurrentOrPreviousSubtitle": "Seek to beginning of current/previous subtitle",
         "seekToNextSubtitle": "次の字幕に早送り",
         "seekToPreviousSubtitle": "前の字幕に巻き戻り",
         "seekToSubtitle": "前/次の字幕に移動",

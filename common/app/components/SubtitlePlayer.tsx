@@ -1,20 +1,3 @@
-import React, { useCallback, useEffect, useState, useMemo, useRef, createRef, RefObject, ReactNode } from 'react';
-import { makeStyles, Theme } from '@material-ui/core/styles';
-import { keysAreEqual } from '../services/util';
-import { useResize } from '../hooks/use-resize';
-import { ScreenLocation, useDragging } from '../hooks/use-dragging';
-import { useTranslation } from 'react-i18next';
-import { PostMineAction, SubtitleModel, AutoPauseContext } from '@project/common';
-import { AsbplayerSettings } from '@project/common/settings';
-import {
-    surroundingSubtitles,
-    mockSurroundingSubtitles,
-    surroundingSubtitlesAroundInterval,
-} from '@project/common/util';
-import { SubtitleCollection } from '@project/common/subtitle-collection';
-import { KeyBinder } from '@project/common/key-binder';
-import SubtitleTextImage from '@project/common/components/SubtitleTextImage';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -24,9 +7,26 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableRow, { TableRowProps } from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import Clock from '../services/clock';
-import { useAppBarHeight } from '../hooks/use-app-bar-height';
+import { Theme, makeStyles } from '@material-ui/core/styles';
+import NoteAddIcon from '@material-ui/icons/NoteAdd';
+import { AutoPauseContext, PostMineAction, SubtitleModel } from '@project/common';
+import SubtitleTextImage from '@project/common/components/SubtitleTextImage';
+import { KeyBinder } from '@project/common/key-binder';
+import { AsbplayerSettings } from '@project/common/settings';
+import { SubtitleCollection } from '@project/common/subtitle-collection';
+import {
+    mockSurroundingSubtitles,
+    surroundingSubtitles,
+    surroundingSubtitlesAroundInterval,
+} from '@project/common/util';
+import React, { ReactNode, RefObject, createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
+import { useTranslation } from 'react-i18next';
+import { useAppBarHeight } from '../hooks/use-app-bar-height';
+import { ScreenLocation, useDragging } from '../hooks/use-dragging';
+import { useResize } from '../hooks/use-resize';
+import Clock from '../services/clock';
+import { keysAreEqual } from '../services/util';
 
 let lastKnownWidth: number | undefined;
 export const minSubtitlePlayerWidth = 200;
@@ -588,17 +588,17 @@ export default function SubtitlePlayer({
     }, [keyBinder, onSeek, subtitles, disableKeyEvents, clock, length]);
 
     useEffect(() => {
-        return keyBinder.bindSeekToBeginningOfCurrentSubtitle(
+        return keyBinder.bindSeekToBeginningOfCurrentOrPreviousSubtitle(
             (event, subtitle) => {
                 event.preventDefault();
                 event.stopPropagation();
-                onSeek(subtitle.start, playingRef.current ?? false);
+                onSeek(subtitle.start, settings.alwaysPlayOnSubtitleRepeat || (playingRef.current ?? false));
             },
             () => disableKeyEvents,
             () => clock.time(length),
             () => subtitles
         );
-    }, [keyBinder, onSeek, subtitles, disableKeyEvents, clock, length]);
+    }, [keyBinder, onSeek, subtitles, disableKeyEvents, clock, length, settings]);
 
     useEffect(() => {
         return keyBinder.bindSeekBackwardOrForward(

@@ -1,46 +1,46 @@
-import React, { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { isMobile } from 'react-device-detect';
 import { makeStyles } from '@material-ui/core/styles';
-import { useWindowSize } from '../hooks/use-window-size';
-import { arrayEquals } from '../services/util';
+import { Color } from '@material-ui/lab/Alert';
 import {
-    SubtitleModel,
     AudioTrackModel,
-    PostMineAction,
-    PlayMode,
-    AutoPausePreference,
     AutoPauseContext,
+    AutoPausePreference,
     OffscreenDomCache,
+    PlayMode,
+    PostMineAction,
+    SubtitleModel,
 } from '@project/common';
+import SubtitleTextImage from '@project/common/components/SubtitleTextImage';
 import {
-    MiscSettings,
-    SubtitleSettings,
     AnkiSettings,
     AsbplayerSettings,
+    MiscSettings,
     SubtitleAlignment,
+    SubtitleSettings,
 } from '@project/common/settings';
-import {
-    surroundingSubtitles,
-    mockSurroundingSubtitles,
-    computeStyles,
-    computeStyleString,
-} from '@project/common/util';
 import { SubtitleCollection } from '@project/common/subtitle-collection';
-import SubtitleTextImage from '@project/common/components/SubtitleTextImage';
-import Clock from '../services/clock';
-import Controls, { Point } from './Controls';
-import PlayerChannel from '../services/player-channel';
-import ChromeExtension from '../services/chrome-extension';
-import PlaybackPreferences from '../services/playback-preferences';
-import { AnkiDialogFinishedRequest } from './Player';
-import { Color } from '@material-ui/lab/Alert';
-import Alert from './Alert';
-import { useSubtitleDomCache } from '../hooks/use-subtitle-dom-cache';
-import { useAppKeyBinder } from '../hooks/use-app-key-binder';
-import { Direction, useSwipe } from '../hooks/use-swipe';
-import './video-player.css';
+import {
+    computeStyleString,
+    computeStyles,
+    mockSurroundingSubtitles,
+    surroundingSubtitles,
+} from '@project/common/util';
 import i18n from 'i18next';
+import React, { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { isMobile } from 'react-device-detect';
 import { adjacentSubtitle } from '../../key-binder';
+import { useAppKeyBinder } from '../hooks/use-app-key-binder';
+import { useSubtitleDomCache } from '../hooks/use-subtitle-dom-cache';
+import { Direction, useSwipe } from '../hooks/use-swipe';
+import { useWindowSize } from '../hooks/use-window-size';
+import ChromeExtension from '../services/chrome-extension';
+import Clock from '../services/clock';
+import PlaybackPreferences from '../services/playback-preferences';
+import PlayerChannel from '../services/player-channel';
+import { arrayEquals } from '../services/util';
+import Alert from './Alert';
+import Controls, { Point } from './Controls';
+import { AnkiDialogFinishedRequest } from './Player';
+import './video-player.css';
 
 interface ExperimentalHTMLVideoElement extends HTMLVideoElement {
     readonly audioTracks: any;
@@ -685,16 +685,20 @@ export default function VideoPlayer({
     }, [keyBinder, playerChannel, subtitles, length, clock]);
 
     useEffect(() => {
-        return keyBinder.bindSeekToBeginningOfCurrentSubtitle(
+        return keyBinder.bindSeekToBeginningOfCurrentOrPreviousSubtitle(
             (event, subtitle) => {
                 event.preventDefault();
                 playerChannel.currentTime(subtitle.start / 1000);
+
+                if (settings.alwaysPlayOnSubtitleRepeat) {
+                    playerChannel.play();
+                }
             },
             () => !videoRef.current,
             () => clock.time(length),
             () => subtitles
         );
-    }, [keyBinder, playerChannel, subtitles, length, clock]);
+    }, [keyBinder, playerChannel, subtitles, length, clock, settings]);
 
     useEffect(() => {
         return keyBinder.bindSeekBackwardOrForward(

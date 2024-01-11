@@ -113,7 +113,7 @@ export interface KeyBindSet {
     readonly seekForward: KeyBind;
     readonly seekToPreviousSubtitle: KeyBind;
     readonly seekToNextSubtitle: KeyBind;
-    readonly seekToBeginningOfCurrentSubtitle: KeyBind;
+    readonly seekToBeginningOfCurrentOrPreviousSubtitle: KeyBind;
     readonly adjustOffsetToPreviousSubtitle: KeyBind;
     readonly adjustOffsetToNextSubtitle: KeyBind;
     readonly decreaseOffset: KeyBind;
