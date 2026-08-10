@@ -81,6 +81,7 @@ import type {
     PageSettings,
     Profile,
     SettingsFormPageConfig,
+    TargetProfile,
     TokenState,
     TokenStatus,
 } from '@project/common/settings';
@@ -208,6 +209,10 @@ export default class ChromeExtension {
     }
 
     get supportsPlaybackEngine() {
+        return this.installed && gte(this.version, '1.20.0');
+    }
+
+    get supportsSettingsProfileImportExport() {
         return this.installed && gte(this.version, '1.20.0');
     }
 
@@ -599,13 +604,17 @@ export default class ChromeExtension {
         window.postMessage(command);
     }
 
-    getSettings(keysAndDefaults: Partial<AsbplayerSettings>): Promise<Partial<AsbplayerSettings>> {
+    getSettings(
+        keysAndDefaults: Partial<AsbplayerSettings>,
+        profile?: TargetProfile
+    ): Promise<Partial<AsbplayerSettings>> {
         const messageId = uuidv4();
         const command: AsbPlayerCommand<GetSettingsMessage> = {
             sender: 'asbplayerv2',
             message: {
                 command: 'get-settings',
                 keysAndDefaults,
+                profile,
                 messageId,
             },
         };
@@ -613,13 +622,14 @@ export default class ChromeExtension {
         return this._createResponsePromise(messageId);
     }
 
-    setSettings(settings: Partial<AsbplayerSettings>): Promise<void> {
+    setSettings(settings: Partial<AsbplayerSettings>, profile?: TargetProfile): Promise<void> {
         const messageId = uuidv4();
         const command: AsbPlayerCommand<SetSettingsMessage> = {
             sender: 'asbplayerv2',
             message: {
                 command: 'set-settings',
                 settings,
+                profile,
                 messageId,
             },
         };

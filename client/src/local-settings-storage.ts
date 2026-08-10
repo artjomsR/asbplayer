@@ -3,6 +3,8 @@ import type { AppSettingsStorage } from '@project/common/app/services/app-settin
 import type { AsbplayerSettings, Profile } from '@project/common/settings';
 import {
     activeProfileKey,
+    defaultProfile,
+    TargetProfile,
     defaultSettings,
     prefixKey,
     prefixedSettings,
@@ -17,10 +19,24 @@ const cachedLocalStorage = new CachedLocalStorage();
 export class LocalSettingsStorage implements AppSettingsStorage {
     private readonly _settingsUpdatedCallbacks: (() => void)[] = [];
     private _storageListener?: (event: StorageEvent) => void;
+    private _profileTarget: TargetProfile = undefined;
+
+    targetingProfile(name: string | undefined): LocalSettingsStorage {
+        const copy = new LocalSettingsStorage();
+        copy._profileTarget = name ?? defaultProfile;
+        return copy;
+    }
 
     async get(keysAndDefaults: Partial<AsbplayerSettings>) {
-        const activeProfile = this._activeProfile();
-        return this._get(keysAndDefaults, activeProfile);
+        return this._get(keysAndDefaults, this._targetProfile());
+    }
+
+    private _targetProfile(): Profile | undefined {
+        if (this._profileTarget === undefined) {
+            return this._activeProfile();
+        }
+
+        return this._profileTarget === null ? undefined : { name: this._profileTarget };
     }
 
     private _get(keysAndDefaults: Partial<AsbplayerSettings>, activeProfile?: Profile) {
@@ -63,8 +79,7 @@ export class LocalSettingsStorage implements AppSettingsStorage {
     }
 
     async set(settings: Partial<AsbplayerSettings>) {
-        const activeProfile = this._activeProfile();
-        this._set(settings, activeProfile);
+        this._set(settings, this._targetProfile());
     }
 
     private _set(settings: Partial<AsbplayerSettings>, activeProfile?: Profile) {

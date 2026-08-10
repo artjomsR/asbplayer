@@ -9,6 +9,7 @@ import type {
     TokenState,
     TokenStatus,
 } from '@project/common/settings';
+import type { TargetProfile } from '../settings/settings-provider';
 import type { GenericParseType, GlobalState, OnlineSubtitleSourceConfig } from '@project/common/global-state';
 import type { DictionaryStatisticsSnapshot } from '@project/common/dictionary-statistics';
 import type {
@@ -724,11 +725,13 @@ export interface CloseSidePanelMessage extends Message {
 export interface GetSettingsMessage extends MessageWithId {
     readonly command: 'get-settings';
     readonly keysAndDefaults: Partial<AsbplayerSettings>;
+    readonly profile?: TargetProfile;
 }
 
 export interface SetSettingsMessage extends MessageWithId {
     readonly command: 'set-settings';
     readonly settings: Partial<AsbplayerSettings>;
+    readonly profile?: TargetProfile;
 }
 
 export interface GetActiveProfileMessage extends MessageWithId {

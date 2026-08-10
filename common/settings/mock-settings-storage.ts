@@ -1,37 +1,54 @@
 import type { AsbplayerSettings } from '@project/common/settings/settings';
-import { prefixedSettings, unprefixedSettings } from '@project/common/settings/settings-provider';
+import {
+    defaultProfile,
+    prefixedSettings,
+    type TargetProfile,
+    unprefixedSettings,
+} from '@project/common/settings/settings-provider';
 import type { AsbplayerSettingsProfile, Profile, SettingsStorage } from '@project/common/settings/settings-provider';
 
 export class MockSettingsStorage implements SettingsStorage {
     private _activeProfile?: string;
     private _profiles: Profile[] = [];
     private _data: any = {};
+    private _profileTarget: TargetProfile = undefined;
+
+    targetingProfile(name: string | undefined): MockSettingsStorage {
+        const copy = new MockSettingsStorage();
+        copy._activeProfile = this._activeProfile;
+        copy._profiles = this._profiles;
+        copy._data = this._data;
+        copy._profileTarget = name ?? defaultProfile;
+        return copy;
+    }
 
     async get(keysAndDefaults: Partial<AsbplayerSettings>) {
+        const name = this._targetProfileName();
         const settings: any = {};
 
-        const actualKeysAndDefaults =
-            this._activeProfile === undefined
-                ? keysAndDefaults
-                : prefixedSettings(keysAndDefaults, this._activeProfile);
+        const actualKeysAndDefaults = name === undefined ? keysAndDefaults : prefixedSettings(keysAndDefaults, name);
 
         for (const [key, defaultValue] of Object.entries(actualKeysAndDefaults)) {
             // Simulate retrieval from actual storage - object references should change
             settings[key] = JSON.parse(JSON.stringify(this._data[key] ?? defaultValue));
         }
 
-        return this._activeProfile === undefined
+        return name === undefined
             ? (settings as Partial<AsbplayerSettings>)
-            : unprefixedSettings(settings as Partial<AsbplayerSettingsProfile<string>>, this._activeProfile);
+            : unprefixedSettings(settings as Partial<AsbplayerSettingsProfile<string>>, name);
     }
 
     async set(settings: Partial<AsbplayerSettings>) {
-        const actualSettings =
-            this._activeProfile === undefined ? settings : prefixedSettings(settings, this._activeProfile);
+        const name = this._targetProfileName();
+        const actualSettings = name === undefined ? settings : prefixedSettings(settings, name);
 
         for (const [key, value] of Object.entries(actualSettings)) {
             this._data[key] = value;
         }
+    }
+
+    private _targetProfileName() {
+        return this._profileTarget === undefined ? this._activeProfile : (this._profileTarget ?? undefined);
     }
 
     async activeProfile(): Promise<Profile | undefined> {

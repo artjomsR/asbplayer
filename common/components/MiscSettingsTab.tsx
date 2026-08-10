@@ -20,14 +20,15 @@ import {
     AutoPauseResumeMode,
     SubtitleVisibility,
     exportSettings,
+    importSettings,
     isTrackAutoCopyable,
     isTrackSeekable,
-    mergeImportedSettings,
     PauseOnHoverMode,
     SubtitleListTimestampDisplay,
+    SettingsProvider,
     updateAutoCopyableTracksValue,
     updateSeekableTracksValue,
-    validateSettings,
+    validateExportedSettings,
     VideoSubtitleSplitBehavior,
 } from '@project/common/settings';
 import { useTranslation } from 'react-i18next';
@@ -55,8 +56,10 @@ function regexIsValid(regex: string) {
 
 interface Props {
     settings: AsbplayerSettings;
+    settingsProvider: SettingsProvider;
     onSettingChanged: <K extends keyof AsbplayerSettings>(key: K, value: AsbplayerSettings[K]) => Promise<void>;
     onSettingsChanged: (settings: Partial<AsbplayerSettings>) => void;
+    onSettingsImported: () => void;
     supportedLanguages: string[];
     insideApp?: boolean;
     extensionInstalled?: boolean;
@@ -65,6 +68,7 @@ interface Props {
     extensionSupportsAutoCopyableTrackSetting?: boolean;
     supportsSubtitleListCustomization: boolean;
     supportsPlaybackEngine: boolean;
+    supportsSettingsProfileImportExport: boolean;
     supportsAutoPauseResume: boolean;
     onViewPlaybackModeKeyboardShortcuts: () => void;
     onViewPlaybackRateKeyboardShortcuts: () => void;
@@ -73,8 +77,10 @@ interface Props {
 
 const MiscSettingTab: React.FC<Props> = ({
     settings,
+    settingsProvider,
     onSettingChanged,
     onSettingsChanged,
+    onSettingsImported,
     supportedLanguages,
     insideApp,
     extensionInstalled,
@@ -83,6 +89,7 @@ const MiscSettingTab: React.FC<Props> = ({
     extensionSupportsAutoCopyableTrackSetting,
     supportsSubtitleListCustomization,
     supportsPlaybackEngine,
+    supportsSettingsProfileImportExport,
     supportsAutoPauseResume,
     onViewPlaybackModeKeyboardShortcuts,
     onViewPlaybackRateKeyboardShortcuts,
@@ -201,20 +208,20 @@ const MiscSettingTab: React.FC<Props> = ({
                 return;
             }
 
-            const importedSettings = JSON.parse(await file.text());
-            const validatedSettings = validateSettings(mergeImportedSettings(importedSettings, settings));
-            onSettingsChanged(validatedSettings);
+            const importedSettings = validateExportedSettings(JSON.parse(await file.text()));
+            await importSettings(settingsProvider, importedSettings, supportsSettingsProfileImportExport);
+            onSettingsImported();
         } catch (e) {
             asbError('settings/import', e);
         }
-    }, [onSettingsChanged, settings]);
+    }, [settingsProvider, supportsSettingsProfileImportExport, onSettingsImported]);
 
     const handleImportSettings = useCallback(() => {
         settingsFileInputRef.current?.click();
     }, []);
     const handleExportSettings = useCallback(() => {
-        exportSettings(settings);
-    }, [settings]);
+        exportSettings(settingsProvider, supportsSettingsProfileImportExport).catch(console.error);
+    }, [settingsProvider, supportsSettingsProfileImportExport]);
 
     return (
         <>
