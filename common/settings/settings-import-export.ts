@@ -854,16 +854,13 @@ export interface ImportableSettings extends ExportedSettings {
 
 export const exportedSettings = async (
     settingsProvider: SettingsProvider,
-    allProfiles: boolean
+    profiles: (string | undefined)[]
 ): Promise<ExportedSettings> => {
     const activeProfile = (await settingsProvider.activeProfile())?.name;
-    const profileNames = allProfiles
-        ? [undefined, ...(await settingsProvider.profiles()).map((p) => p.name)]
-        : [activeProfile];
-    const profiles: ExportedSettingsProfile[] = [];
+    const exportedProfiles: ExportedSettingsProfile[] = [];
 
-    for (const name of profileNames) {
-        profiles.push({
+    for (const name of profiles) {
+        exportedProfiles.push({
             ...(name === undefined ? {} : { name }),
             settings: settingsForExport(await settingsProvider.targetingProfile(name).getAll()),
         });
@@ -871,12 +868,12 @@ export const exportedSettings = async (
 
     return {
         ...(activeProfile === undefined ? {} : { activeProfile }),
-        profiles,
+        profiles: exportedProfiles,
     };
 };
 
-export const exportSettings = async (settingsProvider: SettingsProvider, allProfiles: boolean) => {
-    const exported = await exportedSettings(settingsProvider, allProfiles);
+export const exportSettings = async (settingsProvider: SettingsProvider, profiles: (string | undefined)[]) => {
+    const exported = await exportedSettings(settingsProvider, profiles);
     download(
         new Blob([JSON.stringify(exported)], { type: 'application/json' }),
         `asbplayer-settings-${getCurrentTimeString()}.json`
@@ -908,11 +905,11 @@ export const validateExportedSettings = (parsed: any): ImportableSettings => {
 export const importSettings = async (
     settingsProvider: SettingsProvider,
     imported: ImportableSettings,
-    allProfiles: boolean
+    profiles: (string | undefined)[] | undefined
 ) => {
     const activeProfile = (await settingsProvider.activeProfile())?.name;
 
-    if (!allProfiles || imported.forActiveProfile) {
+    if (profiles === undefined) {
         const profile =
             imported.profiles.find((p) => p.name === activeProfile) ??
             imported.profiles.find((p) => p.name === undefined) ??
@@ -928,17 +925,23 @@ export const importSettings = async (
 
     const existingProfiles = new Set((await settingsProvider.profiles()).map((p) => p.name));
 
-    for (const { name, settings } of imported.profiles) {
+    for (const name of profiles) {
+        const profile = imported.profiles.find((p) => p.name === name);
+
+        if (profile === undefined) {
+            continue;
+        }
+
         if (name !== undefined && !existingProfiles.has(name)) {
             await settingsProvider.addProfile(name);
         }
 
         const targetedProvider = settingsProvider.targetingProfile(name);
         const currentSettings = await targetedProvider.getAll();
-        await targetedProvider.set(mergeImportedSettings(settings, currentSettings));
+        await targetedProvider.set(mergeImportedSettings(profile.settings, currentSettings));
     }
 
-    if (imported.activeProfile !== activeProfile) {
+    if (imported.activeProfile !== activeProfile && profiles.includes(imported.activeProfile)) {
         await settingsProvider.setActiveProfile(imported.activeProfile);
     }
 };
