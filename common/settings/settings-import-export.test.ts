@@ -14,9 +14,9 @@ import {
     settingsForExport,
     validateExportedSettings,
     validateSettings,
-} from './settings-import-export';
-import { defaultSettings, SettingsProvider } from './settings-provider';
-import { MockSettingsStorage } from './mock-settings-storage';
+} from '@project/common/settings/settings-import-export';
+import { defaultSettings, SettingsProvider } from '@project/common/settings/settings-provider';
+import { MockSettingsStorage } from '@project/common/settings/mock-settings-storage';
 import { describe, expect, it } from '@jest/globals';
 import { PlayMode } from '@project/common';
 

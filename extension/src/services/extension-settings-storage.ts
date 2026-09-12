@@ -1,7 +1,6 @@
-import type { AsbplayerSettings, SettingsStorage, Profile } from '@project/common/settings';
+import type { AsbplayerSettings, SettingsStorage, Profile, TargetProfile } from '@project/common/settings';
 import {
     defaultProfile,
-    TargetProfile,
     targetProfileName,
     unprefixedSettings,
     prefixedSettings,

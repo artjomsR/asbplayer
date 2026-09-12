@@ -1,10 +1,9 @@
 import { CachedLocalStorage } from '@project/common/app/services/cached-local-storage';
 import type { AppSettingsStorage } from '@project/common/app/services/app-settings-storage';
-import type { AsbplayerSettings, Profile } from '@project/common/settings';
+import type { AsbplayerSettings, Profile, TargetProfile } from '@project/common/settings';
 import {
     activeProfileKey,
     defaultProfile,
-    TargetProfile,
     defaultSettings,
     prefixKey,
     prefixedSettings,

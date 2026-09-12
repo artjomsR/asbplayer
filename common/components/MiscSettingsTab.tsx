@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import SettingsTextField from '@project/common/components/SettingsTextField';
 import SwitchLabelWithHoverEffect from '@project/common/components/SwitchLabelWithHoverEffect';
 import LabelWithHoverEffect from '@project/common/components/LabelWithHoverEffect';
-import type { AsbplayerSettings, ImportableSettings } from '@project/common/settings';
+import type { AsbplayerSettings, ImportableSettings, SettingsProvider } from '@project/common/settings';
 import {
     autoPausePreferenceForCheckboxChange,
     AutoPauseResumeMode,
@@ -25,13 +25,13 @@ import {
     isTrackSeekable,
     PauseOnHoverMode,
     SubtitleListTimestampDisplay,
-    SettingsProvider,
     updateAutoCopyableTracksValue,
     updateSeekableTracksValue,
     validateExportedSettings,
     VideoSubtitleSplitBehavior,
 } from '@project/common/settings';
-import ProfileSelectionDialog, { type ProfileOption } from '@project/common/components/ProfileSelectionDialog';
+import ProfileSelectionDialog from '@project/common/components/ProfileSelectionDialog';
+import type { ProfileOption } from '@project/common/components/ProfileSelectionDialog';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AutoPausePreference, SubtitleHtml } from '..';

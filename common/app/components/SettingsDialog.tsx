@@ -8,8 +8,8 @@ import type ChromeExtension from '@project/common/app/services/chrome-extension'
 import SettingsForm from '@project/common/components/SettingsForm';
 import { useLocalFontFamilies } from '@project/common/hooks';
 import type { Anki } from '@project/common/anki';
-import type { AsbplayerSettings, Profile } from '@project/common/settings';
-import { SettingsProvider, supportedLanguages, testCard } from '@project/common/settings';
+import type { AsbplayerSettings, Profile, SettingsProvider } from '@project/common/settings';
+import { supportedLanguages, testCard } from '@project/common/settings';
 import SettingsProfileSelectMenu from '@project/common/components/SettingsProfileSelectMenu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';

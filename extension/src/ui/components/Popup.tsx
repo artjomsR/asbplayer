@@ -1,7 +1,7 @@
 import Grid from '@mui/material/Grid';
 import type { Command, HttpPostMessage, OpenStatisticsOverlayMessage, PopupToExtensionCommand } from '@project/common';
-import type { AsbplayerSettings, Profile } from '@project/common/settings';
-import { chromeCommandBindsToKeyBinds, dictionaryTrackEnabled, SettingsProvider } from '@project/common/settings';
+import type { AsbplayerSettings, Profile, SettingsProvider } from '@project/common/settings';
+import { chromeCommandBindsToKeyBinds, dictionaryTrackEnabled } from '@project/common/settings';
 import SettingsForm from '@project/common/components/SettingsForm';
 import PanelIcon from '@project/common/components/PanelIcon';
 import LaunchIcon from '@mui/icons-material/Launch';

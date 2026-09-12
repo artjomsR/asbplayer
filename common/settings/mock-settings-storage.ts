@@ -1,11 +1,11 @@
 import type { AsbplayerSettings } from '@project/common/settings/settings';
-import {
-    defaultProfile,
-    prefixedSettings,
-    type TargetProfile,
-    unprefixedSettings,
+import { defaultProfile, prefixedSettings, unprefixedSettings } from '@project/common/settings/settings-provider';
+import type {
+    AsbplayerSettingsProfile,
+    Profile,
+    SettingsStorage,
+    TargetProfile,
 } from '@project/common/settings/settings-provider';
-import type { AsbplayerSettingsProfile, Profile, SettingsStorage } from '@project/common/settings/settings-provider';
 
 export class MockSettingsStorage implements SettingsStorage {
     private _activeProfile?: string;

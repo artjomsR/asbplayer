@@ -2,7 +2,8 @@ import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import ProfileSelectionDialog, { type ProfileOption } from '@project/common/components/ProfileSelectionDialog';
+import ProfileSelectionDialog from '@project/common/components/ProfileSelectionDialog';
+import type { ProfileOption } from '@project/common/components/ProfileSelectionDialog';
 
 jest.mock('react-i18next', () => ({
     useTranslation: () => ({
@@ -29,7 +30,7 @@ describe('ProfileSelectionDialog', () => {
         container.remove();
     });
 
-    const checkboxes = () => Array.from(document.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
+    const checkboxes = () => Array.from(document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'));
     const buttonByText = (text: string) =>
         Array.from(document.querySelectorAll('button')).find((button) => (button.textContent ?? '').includes(text));
 

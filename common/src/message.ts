@@ -6,10 +6,10 @@ import type {
     PageSettings,
     SettingsFormPageConfig,
     SubtitleSettings,
+    TargetProfile,
     TokenState,
     TokenStatus,
 } from '@project/common/settings';
-import type { TargetProfile } from '../settings/settings-provider';
 import type { GenericParseType, GlobalState, OnlineSubtitleSourceConfig } from '@project/common/global-state';
 import type { DictionaryStatisticsSnapshot } from '@project/common/dictionary-statistics';
 import type {
