@@ -941,10 +941,6 @@ export const importSettings = async (
         const currentSettings = await targetedProvider.getAll();
         await targetedProvider.set(mergeImportedSettings(profile.settings, currentSettings));
     }
-
-    if (imported.activeProfile !== activeProfile && profiles.includes(imported.activeProfile)) {
-        await settingsProvider.setActiveProfile(imported.activeProfile);
-    }
 };
 
 export const validateSettings = (settings: any) => {

@@ -697,7 +697,7 @@ it('imports the settings of every selected profile, creating profiles that do no
     await importSettings(provider, exported, [undefined, 'profile a']);
 
     expect((await provider.profiles()).map((p) => p.name)).toEqual(['profile a']);
-    expect((await provider.activeProfile())?.name).toBe('profile a');
+    expect(await provider.activeProfile()).toBeUndefined();
     expect((await provider.targetingProfile(undefined).getAll()).tabName).toBe('default-tab');
     expect((await provider.targetingProfile('profile a').getAll()).tabName).toBe('a-tab');
 });
@@ -712,11 +712,11 @@ it('leaves unselected profiles and the active profile alone', async () => {
     expect((await provider.profiles()).map((p) => p.name)).toEqual(['profile a', 'profile b']);
     expect((await provider.targetingProfile('profile a').getAll()).tabName).toBe('imported-a-tab');
     expect((await provider.targetingProfile('profile b').getAll()).tabName).toBe('b-tab');
-    // The imported file's active profile (the default profile) was not selected for import
+    // Importing does not change the active profile
     expect((await provider.activeProfile())?.name).toBe('profile b');
 });
 
-it('activates the imported active profile when it is selected for import', async () => {
+it('does not change the active profile when importing selected profiles', async () => {
     const provider = await providerWithProfiles();
     const exported = validateExportedSettings({
         activeProfile: 'profile a',
@@ -727,7 +727,7 @@ it('activates the imported active profile when it is selected for import', async
     });
     await importSettings(provider, exported, [undefined, 'profile a']);
 
-    expect((await provider.activeProfile())?.name).toBe('profile a');
+    expect((await provider.activeProfile())?.name).toBe('profile b');
     expect((await provider.targetingProfile('profile a').getAll()).tabName).toBe('imported-a-tab');
     expect((await provider.targetingProfile(undefined).getAll()).tabName).toBe('imported-default-tab');
     expect((await provider.targetingProfile('profile b').getAll()).tabName).toBe('b-tab');
@@ -772,5 +772,7 @@ it('round trips the settings of every profile', async () => {
         'profile b',
     ]);
 
-    expect(await exportedSettings(otherProvider, [undefined, 'profile a', 'profile b'])).toEqual(exported);
+    expect((await exportedSettings(otherProvider, [undefined, 'profile a', 'profile b'])).profiles).toEqual(
+        exported.profiles
+    );
 });
