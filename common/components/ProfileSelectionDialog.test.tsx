@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import type { Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import ProfileSelectionDialog from '@project/common/components/ProfileSelectionDialog';
-import type { ProfileOption } from '@project/common/components/ProfileSelectionDialog';
 
 jest.mock('react-i18next', () => ({
     useTranslation: () => ({
@@ -13,7 +12,7 @@ jest.mock('react-i18next', () => ({
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
-const profiles: ProfileOption[] = [{ name: undefined }, { name: 'profile a' }, { name: 'profile b' }];
+const profiles: (string | undefined)[] = [undefined, 'profile a', 'profile b'];
 
 describe('ProfileSelectionDialog', () => {
     let container: HTMLDivElement;

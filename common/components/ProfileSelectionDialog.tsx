@@ -13,16 +13,12 @@ import IconButton from '@mui/material/IconButton';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export interface ProfileOption {
-    // Undefined for the default profile
-    name?: string;
-}
-
 interface Props {
     open: boolean;
     title: string;
     confirmLabel: string;
-    profiles: ProfileOption[];
+    // Undefined targets the default profile
+    profiles: (string | undefined)[];
     onConfirm: (selected: (string | undefined)[]) => void;
     onClose: () => void;
 }
@@ -33,7 +29,7 @@ const ProfileSelectionDialog = ({ open, title, confirmLabel, profiles, onConfirm
 
     useEffect(() => {
         if (open) {
-            setSelected(new Set(profiles.map((profile) => profile.name)));
+            setSelected(new Set(profiles));
         }
     }, [open, profiles]);
 
@@ -52,7 +48,7 @@ const ProfileSelectionDialog = ({ open, title, confirmLabel, profiles, onConfirm
     };
 
     const checkAll = () => {
-        setSelected(new Set(profiles.map((profile) => profile.name)));
+        setSelected(new Set(profiles));
     };
 
     const checkNone = () => {
@@ -60,7 +56,7 @@ const ProfileSelectionDialog = ({ open, title, confirmLabel, profiles, onConfirm
     };
 
     const confirm = () => {
-        onConfirm(profiles.filter((profile) => selected.has(profile.name)).map((profile) => profile.name));
+        onConfirm(profiles.filter((name) => selected.has(name)));
     };
 
     return (
@@ -83,13 +79,11 @@ const ProfileSelectionDialog = ({ open, title, confirmLabel, profiles, onConfirm
                     </Button>
                 </Stack>
                 <FormGroup>
-                    {profiles.map((profile) => (
+                    {profiles.map((name) => (
                         <FormControlLabel
-                            key={profile.name ?? ''}
-                            control={
-                                <Checkbox checked={selected.has(profile.name)} onChange={() => toggle(profile.name)} />
-                            }
-                            label={profile.name ?? t('settings.defaultProfile')}
+                            key={name ?? ''}
+                            control={<Checkbox checked={selected.has(name)} onChange={() => toggle(name)} />}
+                            label={name ?? t('settings.defaultProfile')}
                         />
                     ))}
                 </FormGroup>

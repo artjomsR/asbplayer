@@ -10,6 +10,7 @@ import {
     profilesKey,
     settingsDeserializers,
     saveOnlySettings,
+    targetProfileName,
     unprefixKey,
 } from '@project/common/settings';
 
@@ -27,25 +28,17 @@ export class LocalSettingsStorage implements AppSettingsStorage {
     }
 
     async get(keysAndDefaults: Partial<AsbplayerSettings>) {
-        return this._get(keysAndDefaults, this._targetProfile());
+        return this._get(keysAndDefaults, await targetProfileName(this._profileTarget, () => this._activeProfile()));
     }
 
-    private _targetProfile(): Profile | undefined {
-        if (this._profileTarget === undefined) {
-            return this._activeProfile();
-        }
-
-        return this._profileTarget === null ? undefined : { name: this._profileTarget };
-    }
-
-    private _get(keysAndDefaults: Partial<AsbplayerSettings>, activeProfile?: Profile) {
+    private _get(keysAndDefaults: Partial<AsbplayerSettings>, profileName?: string) {
         const settings: any = {};
         const actualKeysAndDefaults =
-            activeProfile === undefined ? keysAndDefaults : prefixedSettings(keysAndDefaults, activeProfile.name);
+            profileName === undefined ? keysAndDefaults : prefixedSettings(keysAndDefaults, profileName);
 
         for (const [key, defaultValue] of Object.entries(actualKeysAndDefaults)) {
             const value = cachedLocalStorage.get(key);
-            const originalKey = activeProfile === undefined ? key : unprefixKey(key, activeProfile.name);
+            const originalKey = profileName === undefined ? key : unprefixKey(key, profileName);
 
             if (value === null) {
                 settings[originalKey] = defaultValue;
@@ -58,15 +51,14 @@ export class LocalSettingsStorage implements AppSettingsStorage {
     }
 
     async getStored(keys: (keyof AsbplayerSettings)[]) {
-        const activeProfile = this._activeProfile();
-        return this._getStored(keys, activeProfile);
+        return this._getStored(keys, this._activeProfile()?.name);
     }
 
-    private _getStored(keys: (keyof AsbplayerSettings)[], activeProfile?: Profile) {
+    private _getStored(keys: (keyof AsbplayerSettings)[], profileName?: string) {
         const settings: any = {};
 
         for (const key of keys) {
-            const actualKey = activeProfile === undefined ? key : prefixKey(key, activeProfile.name);
+            const actualKey = profileName === undefined ? key : prefixKey(key, profileName);
             const value = cachedLocalStorage.get(actualKey);
 
             if (value !== null) {
@@ -78,11 +70,11 @@ export class LocalSettingsStorage implements AppSettingsStorage {
     }
 
     async set(settings: Partial<AsbplayerSettings>) {
-        this._set(settings, this._targetProfile());
+        this._set(settings, await targetProfileName(this._profileTarget, () => this._activeProfile()));
     }
 
-    private _set(settings: Partial<AsbplayerSettings>, activeProfile?: Profile) {
-        const actualSettings = activeProfile === undefined ? settings : prefixedSettings(settings, activeProfile.name);
+    private _set(settings: Partial<AsbplayerSettings>, profileName?: string) {
+        const actualSettings = profileName === undefined ? settings : prefixedSettings(settings, profileName);
 
         for (const [key, value] of Object.entries(actualSettings)) {
             if (typeof value === 'object') {
@@ -147,7 +139,7 @@ export class LocalSettingsStorage implements AppSettingsStorage {
 
         cachedLocalStorage.set(profilesKey, JSON.stringify(profiles));
         const initialValues = this._getStored(Object.keys(defaultSettings) as (keyof AsbplayerSettings)[]);
-        this._set(initialValues, newProfile);
+        this._set(initialValues, newProfile.name);
     }
 
     async removeProfile(name: string): Promise<void> {

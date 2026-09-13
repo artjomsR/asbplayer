@@ -13,14 +13,14 @@ export class AppExtensionSettingsStorage implements AppSettingsStorage {
         this._extension = extension;
     }
 
+    // Targeted storages are only created when the extension supports profile-aware settings -
+    // older extensions ignore the profile field and read/write the active profile instead
     targetingProfile(name: string | undefined): AppExtensionSettingsStorage {
         const copy = new AppExtensionSettingsStorage(this._extension);
         copy._profileTarget = name ?? defaultProfile;
         return copy;
     }
 
-    // Only pass a profile when the extension supports it - older extensions ignore the field and
-    // would silently read from/write to the active profile instead
     get(keysAndDefaults: Partial<AsbplayerSettings>): Promise<Partial<AsbplayerSettings>> {
         return this._extension.getSettings(keysAndDefaults, this._profileTarget);
     }

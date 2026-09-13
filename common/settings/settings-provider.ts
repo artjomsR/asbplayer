@@ -857,16 +857,21 @@ export interface Profile {
     name: string;
 }
 
+// The profile a storage reads/writes: undefined targets the active profile, null the default
+// profile, and a string a named profile.
 export type TargetProfile = string | null | undefined;
 
+// The default profile, which is stored without the profile prefix
 export const defaultProfile = null;
 
+// Resolves a TargetProfile into a profile name. Undefined means the default profile, which
+// corresponds to unprefixed storage keys.
 export const targetProfileName = async (
     target: TargetProfile,
-    activeProfile: () => Promise<Profile | undefined>
+    getActiveProfile: () => Profile | undefined | Promise<Profile | undefined>
 ): Promise<string | undefined> => {
     if (target === undefined) {
-        return (await activeProfile())?.name;
+        return (await getActiveProfile())?.name;
     }
 
     return target ?? undefined;

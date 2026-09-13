@@ -31,7 +31,6 @@ import {
     VideoSubtitleSplitBehavior,
 } from '@project/common/settings';
 import ProfileSelectionDialog from '@project/common/components/ProfileSelectionDialog';
-import type { ProfileOption } from '@project/common/components/ProfileSelectionDialog';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AutoPausePreference, SubtitleHtml } from '..';
@@ -79,12 +78,12 @@ interface Props {
 type ProfileSelectionDialogState =
     | {
           mode: 'export';
-          profiles: ProfileOption[];
+          profiles: (string | undefined)[];
       }
     | {
           mode: 'import';
           imported: ImportableSettings;
-          profiles: ProfileOption[];
+          profiles: (string | undefined)[];
       };
 
 const MiscSettingTab: React.FC<Props> = ({
@@ -234,7 +233,7 @@ const MiscSettingTab: React.FC<Props> = ({
             setProfileSelectionDialogState({
                 mode: 'import',
                 imported: importedSettings,
-                profiles: importedSettings.profiles.map((profile) => ({ name: profile.name })),
+                profiles: importedSettings.profiles.map((profile) => profile.name),
             });
         } catch (e) {
             asbError('settings/import', e);
@@ -258,7 +257,7 @@ const MiscSettingTab: React.FC<Props> = ({
             const profiles = await settingsProvider.profiles();
             setProfileSelectionDialogState({
                 mode: 'export',
-                profiles: [{ name: undefined }, ...profiles.map((profile) => ({ name: profile.name }))],
+                profiles: [undefined, ...profiles.map((profile) => profile.name)],
             });
         } catch (e) {
             asbError('settings/export', e);

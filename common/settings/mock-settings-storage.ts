@@ -1,5 +1,10 @@
 import type { AsbplayerSettings } from '@project/common/settings/settings';
-import { defaultProfile, prefixedSettings, unprefixedSettings } from '@project/common/settings/settings-provider';
+import {
+    defaultProfile,
+    prefixedSettings,
+    targetProfileName,
+    unprefixedSettings,
+} from '@project/common/settings/settings-provider';
 import type {
     AsbplayerSettingsProfile,
     Profile,
@@ -23,7 +28,7 @@ export class MockSettingsStorage implements SettingsStorage {
     }
 
     async get(keysAndDefaults: Partial<AsbplayerSettings>) {
-        const name = this._targetProfileName();
+        const name = await targetProfileName(this._profileTarget, () => this.activeProfile());
         const settings: any = {};
 
         const actualKeysAndDefaults = name === undefined ? keysAndDefaults : prefixedSettings(keysAndDefaults, name);
@@ -39,16 +44,12 @@ export class MockSettingsStorage implements SettingsStorage {
     }
 
     async set(settings: Partial<AsbplayerSettings>) {
-        const name = this._targetProfileName();
+        const name = await targetProfileName(this._profileTarget, () => this.activeProfile());
         const actualSettings = name === undefined ? settings : prefixedSettings(settings, name);
 
         for (const [key, value] of Object.entries(actualSettings)) {
             this._data[key] = value;
         }
-    }
-
-    private _targetProfileName() {
-        return this._profileTarget === undefined ? this._activeProfile : (this._profileTarget ?? undefined);
     }
 
     async activeProfile(): Promise<Profile | undefined> {
