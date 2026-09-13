@@ -212,8 +212,9 @@ export default class ChromeExtension {
         return this.installed && gte(this.version, '1.20.0');
     }
 
+    //TODO
     get supportsSettingsProfileImportExport() {
-        return this.installed && gte(this.version, '1.20.0');
+        return this.installed && gte(this.version, '1.20.2');
     }
 
     get supportsSubtitleTrackSelectorInWebApp() {

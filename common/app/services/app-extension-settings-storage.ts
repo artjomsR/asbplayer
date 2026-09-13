@@ -13,6 +13,7 @@ export class AppExtensionSettingsStorage implements AppSettingsStorage {
         this._extension = extension;
     }
 
+    // TODO move comment to where version check is
     // Targeted storages are only created when the extension supports profile-aware settings -
     // older extensions ignore the profile field and read/write the active profile instead
     targetingProfile(name: string | undefined): AppExtensionSettingsStorage {
