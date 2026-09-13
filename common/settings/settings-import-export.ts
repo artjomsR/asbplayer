@@ -842,8 +842,6 @@ export interface ExportedSettingsProfile {
 }
 
 export interface ExportedSettings {
-    // Profile that was active when the settings were exported, undefined for the default profile
-    activeProfile?: string;
     profiles: ExportedSettingsProfile[];
 }
 
@@ -857,7 +855,6 @@ export const exportedSettings = async (
     settingsProvider: SettingsProvider,
     profiles: (string | undefined)[]
 ): Promise<ExportedSettings> => {
-    const activeProfile = (await settingsProvider.activeProfile())?.name;
     const exportedProfiles: ExportedSettingsProfile[] = [];
 
     for (const name of profiles) {
@@ -868,7 +865,6 @@ export const exportedSettings = async (
     }
 
     return {
-        ...(activeProfile === undefined ? {} : { activeProfile }),
         profiles: exportedProfiles,
     };
 };
@@ -900,7 +896,7 @@ export const validateExportedSettings = (parsed: any): ImportableSettings => {
         return { name: profile.name, settings: validateSettings(profile.settings) };
     });
 
-    return { activeProfile: parsed.activeProfile, profiles };
+    return { profiles };
 };
 
 export const importSettings = async (
