@@ -754,6 +754,20 @@ describe('DictionaryDB', () => {
         expect(results.multi).toHaveLength(2);
     });
 
+    it('does not import records for a removed legacy profile', async () => {
+        const profiles = [profile];
+        await expect(
+            dictionaryDB.importRecordLocalBulk(
+                [
+                    { profile: 'Default', token: 'word', status: TokenStatus.UNKNOWN, lemmas: ['word'] },
+                    { profile, token: 'kept', status: TokenStatus.UNKNOWN, lemmas: ['kept'] },
+                ],
+                profiles
+            )
+        ).resolves.toEqual({ importedTokens: [tokenKey('kept')] });
+        expect(profiles).toEqual([profile]);
+    });
+
     it('imports local records with profile, status, lemma, and existing-record invariants', async () => {
         const customState = 2 as TokenState;
 
@@ -794,7 +808,7 @@ describe('DictionaryDB', () => {
                 },
                 { profile, token: '123', status: TokenStatus.UNKNOWN, lemmas: ['alpha'] },
             ],
-            [profile]
+            [profile, 'Default']
         );
 
         expect(result.importedTokens).toEqual([
