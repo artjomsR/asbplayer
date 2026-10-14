@@ -1,10 +1,14 @@
 import { defineConfig, loadEnv } from 'vite';
+import { execFileSync } from 'node:child_process';
 import react from '@vitejs/plugin-react';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
+    if (command === 'serve') {
+        process.env.VITE_APP_VERSION_REPO_PATH ??= `commit/${execFileSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' }).trim()}`;
+    }
     const env = loadEnv(mode, process.cwd());
     const domain = env.VITE_APP_DOMAIN || 'app.asbplayer.dev';
     const base = env.VITE_APP_BASE_PATH || '/';
