@@ -337,6 +337,7 @@ export default function VideoDataSyncDialog({
                                 const newSelectedSubtitles = [...selectedSubtitleTrackIds];
                                 newSelectedSubtitles[i] = e.target.value;
                                 onSelectedSubtitleTrackIds(newSelectedSubtitles);
+                                setFocusOkAfterFileSelection(true);
                             }}
                         >
                             {subtitleTracks.map((subtitle) => (
