@@ -534,7 +534,10 @@ export default function VideoDataSyncDialog({
                                         label={t('extension.videoDataSync.videoName')}
                                         value={name}
                                         disabled={disabled}
-                                        onChange={(e) => setName(e.target.value)}
+                                        onChange={(e) => {
+                                            setFocusOkAfterFileSelection(false);
+                                            setName(e.target.value);
+                                        }}
                                     />
                                 </Grid>
                             )}
