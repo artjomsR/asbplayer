@@ -334,6 +334,7 @@ export default function VideoDataSyncDialog({
                             value={subtitleTracks.find((track) => track.id === selectedSubtitleTrackIds[i])?.id ?? '-'}
                             disabled={isLoading || disabled}
                             onChange={(e) => {
+                                if (e.target.value === undefined) return;
                                 const newSelectedSubtitles = [...selectedSubtitleTrackIds];
                                 newSelectedSubtitles[i] = e.target.value;
                                 onSelectedSubtitleTrackIds(newSelectedSubtitles);
