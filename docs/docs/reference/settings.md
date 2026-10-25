@@ -715,11 +715,17 @@ These settings use the word statuses, states, and frequencies from [Annotation](
 
 Selects the subtitle track whose annotation playback settings you are editing. The selected track is shared with the Annotation tab.
 
+### Select first matching word on pause {#select-first-matching-word-on-pause}
+
+Selects the first word matching any chosen status or state whenever playback pauses, including manual pauses, and after seeking while paused. Leave the selection empty to disable this behavior. Selection happens in the video player, or in the subtitle player when no video is loaded or connected.
+
+When an [annotation-based auto-pause rule](#auto-pause-subtitles-containing-these-words) causes the pause, its matching word is selected instead. This dropdown continues to control selection on manual pauses.
+
 Each of the word rules below has its own status and state selection, word-count limit, and frequency limit. A word must have a selected status or state and satisfy both limits.
 
 ### Auto-pause subtitles containing these words {#auto-pause-subtitles-containing-these-words}
 
-When auto-pause mode is on, pause only on subtitles containing a matching word. The first matching word is selected when playback pauses.
+When auto-pause mode is on, pause only on subtitles containing a matching word and select the first matching word. This takes precedence over [**Select first matching word on pause**](#select-first-matching-word-on-pause) for automatic pauses; that dropdown still applies on manual pauses.
 
 ### Repeat subtitles containing these words {#repeat-subtitles-containing-these-words}
 
